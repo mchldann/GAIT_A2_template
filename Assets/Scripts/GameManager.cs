@@ -20,15 +20,15 @@ namespace Completed
 		public float turnDelay = 0.1f;							//Delay between each Player turn.
 		public static GameManager instance = null;              //Static instance of GameManager which allows it to be accessed by any other script.
 
-        public const int playerMovesPerEnemyMove = 2;
-        public int playerMovesSinceEnemyMove = 0;
+        public const int playerMovesPerSheepMove = 2;
+        public int playerMovesSinceSheepMove = 0;
 		
 		private Text levelText;									//Text to display current level number.
 		private GameObject levelImage;							//Image to block out level as levels are being set up, background for levelText.
 		private BoardManager boardScript;						//Store a reference to our BoardManager which will set up the level.
 		public int level = 1;									//Current level number, expressed in game as "Day 1".
-		private List<Enemy> enemies;							//List of all Enemy units, used to issue them move commands.
-		private bool enemiesMoving;								//Boolean to check if enemies are moving.
+		private List<Sheep> sheep;							//List of all sheep units, used to issue them move commands.
+		private bool sheepMoving;								//Boolean to check if sheep are moving.
 		public bool doingSetup = true;                          //Boolean to check if we're setting up board, prevent Player from moving during setup.
 
         private bool heuristicModeSet = false;
@@ -83,8 +83,8 @@ namespace Completed
 			//Sets this to not be destroyed when reloading scene
 			DontDestroyOnLoad(gameObject);
 
-            //Assign enemies to a new List of Enemy objects.
-            enemies = new List<Enemy>();
+            //Assign sheep to a new List of Sheep objects.
+            sheep = new List<Sheep>();
 			
 			//Get a component reference to the attached BoardManager script
 			boardScript = GetComponent<BoardManager>();
@@ -136,13 +136,13 @@ namespace Completed
 			//Call the HideLevelImage function with a delay in seconds of levelStartDelay.
 			Invoke("HideLevelImage", levelStartDelay);
 			
-			//Clear any Enemy objects in our List to prepare for next level.
-			enemies.Clear();
+			//Clear any Sheep objects in our List to prepare for next level.
+			sheep.Clear();
 			
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			boardScript.SetupScene(level);
 
-            playerMovesSinceEnemyMove = 0;
+            playerMovesSinceSheepMove = 0;
         }
 		
 		
@@ -154,28 +154,28 @@ namespace Completed
 			
 			//Set doingSetup to false allowing player to move again.
 			doingSetup = false;
-            playerMovesSinceEnemyMove = 0;
+            playerMovesSinceSheepMove = 0;
 		}
 		
 		//Update is called every frame.
 		void Update()
 		{
-			//Check that playersTurn or enemiesMoving or doingSetup are not currently true.
-			if((playerMovesSinceEnemyMove < playerMovesPerEnemyMove) || enemiesMoving || doingSetup)
+			//Check that playersTurn or sheepMoving or doingSetup are not currently true.
+			if((playerMovesSinceSheepMove < playerMovesPerSheepMove) || sheepMoving || doingSetup)
 				
-				//If any of these are true, return and do not start MoveEnemies.
+				//If any of these are true, return and do not start MoveSheep.
 				return;
 
-            //Start moving enemies.
-            playerMovesSinceEnemyMove = 0;
-            StartCoroutine (MoveEnemies ());
+            //Start moving sheep.
+            playerMovesSinceSheepMove = 0;
+            StartCoroutine (MoveSheep ());
 		}
 		
-		//Call this to add the passed in Enemy to the List of Enemy objects.
-		public void AddEnemyToList(Enemy script)
+		//Call this to add the passed in Sheep to the List of Sheep objects.
+		public void AddSheepToList(Sheep script)
 		{
-			//Add Enemy to List enemies.
-			enemies.Add(script);
+			//Add Sheep to List sheep.
+			sheep.Add(script);
 		}
 		
 		
@@ -192,33 +192,33 @@ namespace Completed
             //enabled = false;
         }
 		
-		//Coroutine to move enemies in sequence.
-		IEnumerator MoveEnemies()
+		//Coroutine to move sheep in sequence.
+		IEnumerator MoveSheep()
 		{
-			enemiesMoving = true;
+			sheepMoving = true;
 			
 			//Wait for turnDelay seconds, defaults to .1 (100 ms).
 			yield return new WaitForSeconds(turnDelay);
 			
-			//If there are no enemies spawned (IE in first level):
-			if (enemies.Count == 0) 
+			//If there are no sheep spawned (IE in first level):
+			if (sheep.Count == 0) 
 			{
-				//Wait for turnDelay seconds between moves, replaces delay caused by enemies moving when there are none.
+				//Wait for turnDelay seconds between moves, replaces delay caused by sheep moving when there are none.
 				yield return new WaitForSeconds(turnDelay);
 			}
 			
-			//Loop through List of Enemy objects.
-			for (int i = 0; i < enemies.Count; i++)
+			//Loop through List of Sheep objects.
+			for (int i = 0; i < sheep.Count; i++)
 			{
-				//Call the MoveEnemy function of Enemy at index i in the enemies List.
-				enemies[i].MoveEnemy ();
+				//Call the MoveSheep function of Sheep at index i in the sheep List.
+				sheep[i].MoveSheep ();
 				
-				//Wait for Enemy's moveTime before moving next Enemy, 
+				//Wait for Sheep's moveTime before moving next Sheep, 
 				yield return new WaitForSeconds(GameManager.instance.moveTime);
 			}
 			
-			//Enemies are done moving, set enemiesMoving to false.
-			enemiesMoving = false;
+			//Sheep are done moving, set sheepMoving to false.
+			sheepMoving = false;
 		}
 	}
 }

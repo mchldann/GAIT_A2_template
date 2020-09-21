@@ -78,7 +78,7 @@ namespace Completed
 			//Since the player has moved and lost food points, check if the game has ended.
 			CheckIfGameOver ();
 
-            GameManager.instance.playerMovesSinceEnemyMove++;
+            GameManager.instance.playerMovesSinceSheepMove++;
 		}
 		
 		
