@@ -18,6 +18,7 @@ namespace Completed
         public override void OnEpisodeBegin()
         {
             // TODO: Add any necessary code
+            GameManager.instance.CreateNewLevel();
         }
 
         public void HandleAttemptMove()
@@ -32,40 +33,19 @@ namespace Completed
             AddReward(0.0f);
         }
 
-        public void HandleFoundFood()
-        {
-            // TODO: Change the reward below as appropriate.
-            AddReward(0.0f);
-        }
-
-        public void HandleFoundSoda()
-        {
-            // TODO: Change the reward below as appropriate.
-            AddReward(0.0f);
-        }
-
-        public void HandleLoseFood(int loss)
-        {
-            // TODO: Change the reward below as appropriate.
-            AddReward(0.0f);
-        }
-
         public void HandleLevelRestart(bool gameOver)
         {
             if (gameOver)
             {
                 Academy.Instance.StatsRecorder.Add("Level Reached", GameManager.instance.level);
                 EndEpisode();
-            }
-
-            // NOTE: You might also want to end the episode whenever the player successfully reaches the exit sign. You can achieve this by uncommenting the below:
-            /*
+            }   
             else
             {
                 // Probably *is* best to consider episodes finished when the exit is reached
-                EndEpisode();
+                // EndEpisode();
             }
-            */
+            
         }
 
         public override void CollectObservations(VectorSensor sensor)
@@ -77,7 +57,6 @@ namespace Completed
             {
                 sensor.AddObservation(0.0f);
             }
-
             base.CollectObservations(sensor);
         }
 

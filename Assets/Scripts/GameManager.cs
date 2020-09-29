@@ -14,7 +14,6 @@ namespace Completed
         public float inverseMoveTime;               //Used to make movement more efficient.
         public float restartLevelDelay = 1f;		//Delay time in seconds to restart level.
 
-        public const int playerStartFood = 100;
 
         public float levelStartDelay = 2f;						//Time to wait before starting level, in seconds.
 		public float turnDelay = 0.1f;							//Delay between each Player turn.
@@ -25,14 +24,15 @@ namespace Completed
 		
 		private Text levelText;									//Text to display current level number.
 		private GameObject levelImage;							//Image to block out level as levels are being set up, background for levelText.
-		private BoardManager boardScript;						//Store a reference to our BoardManager which will set up the level.
+		public BoardManager boardScript;						//Store a reference to our BoardManager which will set up the level.
 		public int level = 1;									//Current level number, expressed in game as "Day 1".
-		private List<Sheep> sheep;							//List of all sheep units, used to issue them move commands.
+		private List<Sheep> sheep;								//List of all sheep units, used to issue them move commands.
 		private bool sheepMoving;								//Boolean to check if sheep are moving.
 		public bool doingSetup = true;                          //Boolean to check if we're setting up board, prevent Player from moving during setup.
 
         private bool heuristicModeSet = false;
 
+		public TestResults tr;
         public void CreateNewLevel()
         {
             instance.level++;
@@ -92,25 +92,6 @@ namespace Completed
 			//Call the InitGame function to initialize the first level 
 			InitGame();
 		}
-
-        /*
-        //this is called only once, and the paramter tell it to be called only after the scene was loaded
-        //(otherwise, our Scene Load callback would be called the very first load, and we don't want that)
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        static public void CallbackInitialization()
-        {
-            //register the callback to be called everytime the scene is loaded
-            SceneManager.sceneLoaded += OnSceneLoaded;
-        }
-
-        //This is called each time a scene is loaded.
-        static private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
-        {
-            instance.level++;
-            instance.InitGame();
-        }
-        */
-
 		
 		//Initializes the game for each level.
 		void InitGame()
@@ -188,8 +169,10 @@ namespace Completed
 			//Enable black background image gameObject.
 			levelImage.SetActive(true);
 
-            //Disable this GameManager.
-            //enabled = false;
+			//Disable this GameManager.
+			//enabled = false;
+
+			tr.AddCount(level);
         }
 		
 		//Coroutine to move sheep in sequence.
