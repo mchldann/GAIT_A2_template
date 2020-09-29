@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 namespace Completed
@@ -57,21 +58,28 @@ namespace Completed
 		//MoveSheep is called by the GameManger each turn to tell each Sheep to try to away from the player.
 		public void MoveSheep ()
 		{
-			//Declare variables for X and Y axis move directions, these range from -1 to 1.
-			//These values allow us to choose between the cardinal directions: up, down, left and right.
-			int xDir = 0;
-			int yDir = 0;
-			
-			float xDiff = target.position.x - transform.position.x;
-			float yDiff = target.position.y - transform.position.y;
+            Vector2 pos = new Vector2(transform.position.x, transform.position.y);
+            Vector2 tpos = new Vector2(target.position.x, target.position.y);
 
-			if (Mathf.Abs(xDiff) < Mathf.Abs(yDiff))
-				xDir = xDiff > 0.0f ? -1 : 1;
-			else
-				yDir = yDiff > 0.0f ? -1 : 1;
-			
-			//Call the AttemptMove function and pass in the generic parameter Player, because Sheep is moving and expecting to potentially encounter a Player
-			AttemptMove <Player> (xDir, yDir);
+            // Sort the possible directions by which one will get the sheep the furthest from the target (player)
+            Vector2Int[] directions = {Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
+            Array.Sort(directions, delegate (Vector2Int a, Vector2Int b) {
+                    Vector2 adiff = pos + a - tpos;
+                    Vector2 bdiff = pos + b - tpos;
+                    return adiff.sqrMagnitude > bdiff.sqrMagnitude ? -1 : 1;
+                    });
+            
+
+            // Look for a direction in which we can move
+            foreach (var dir in directions)
+            {
+                if (CanMove(dir.x, dir.y))
+                {
+                    //Call the AttemptMove function and pass in the generic parameter Player, because Sheep is moving and expecting to potentially encounter a Player
+                    AttemptMove <Player> (dir.x, dir.y);
+                    break;
+                }
+            }
 		}
 		
 		
