@@ -30,6 +30,10 @@ namespace Completed
 		private bool sheepMoving;								//Boolean to check if sheep are moving.
 		public bool doingSetup = true;                          //Boolean to check if we're setting up board, prevent Player from moving during setup.
 
+		public int score;
+		public int endScore;
+
+
         private bool heuristicModeSet = false;
 
 		public TestResults tr;
@@ -119,7 +123,10 @@ namespace Completed
 			
 			//Clear any Sheep objects in our List to prepare for next level.
 			sheep.Clear();
-			
+
+			score = 0;
+			endScore = 0;
+
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			boardScript.SetupScene(level);
 
@@ -157,7 +164,14 @@ namespace Completed
 		{
 			//Add Sheep to List sheep.
 			sheep.Add(script);
+			endScore++;
 		}
+
+		public void RemoveSheepFromList(Sheep script)
+        {
+			//Remove Sheep from List sheep.
+			sheep.Remove(script);
+        }
 		
 		
 		//GameOver is called when the player reaches 0 food points
@@ -203,6 +217,23 @@ namespace Completed
 			//Sheep are done moving, set sheepMoving to false.
 			sheepMoving = false;
 		}
+
+		public void CheckIfGameOver()
+        {
+			score++;
+			if (score == endScore)
+            {
+				Debug.Log("End");
+				Player player = FindObjectOfType<Player>();
+				player.CheckIfGameOver();
+			}
+			else
+            {
+				Debug.Log(score + " / " + endScore);
+            }
+
+			
+        }
 	}
 }
 

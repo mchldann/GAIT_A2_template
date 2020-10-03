@@ -96,5 +96,17 @@ namespace Completed
 			//Call the RandomizeSfx function of SoundManager passing in the two audio clips to choose randomly between.
 			SoundManager.instance.RandomizeSfx (attackSound1, attackSound2);
 		}
+
+		private void OnTriggerEnter2D(Collider2D collision)
+		{
+			// Check if sheep hits the exit sign
+			if (collision.tag == "Exit")
+			{
+				// Disable the sheep
+				this.gameObject.SetActive(false);
+				GameManager.instance.RemoveSheepFromList(this);
+				GameManager.instance.CheckIfGameOver();
+			}
+		}
 	}
 }
