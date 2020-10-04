@@ -45,7 +45,11 @@ namespace Completed
 		//AttemptMove takes a generic parameter T which for Player will be of the type Wall, it also takes integers for x and y direction to move in.
 		public override void AttemptMove <T> (int xDir, int yDir)
 		{
-			
+			if (moves > 300)
+            {
+				agent.HandleRestartTest();
+				CheckIfGameOver();
+            }
 			//Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
 			base.AttemptMove <T> (xDir, yDir);
 			
@@ -123,6 +127,11 @@ namespace Completed
 
 
 		}
+
+		public void Score()
+        {
+			agent.HandleSheepScore();
+        }
     }
 }
 

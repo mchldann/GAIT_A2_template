@@ -21,16 +21,27 @@ namespace Completed
             GameManager.instance.CreateNewLevel();
         }
 
+        public void HandleRestartTest()
+        {
+            AddReward(-1.0f);
+        }
+
+        public void HandleSheepScore()
+        {
+            AddReward(1.0f);
+        }
+
         public void HandleAttemptMove()
         {
             // TODO: Change the reward below as appropriate. If you want to add a cost per move, you could change the reward to -1.0f (for example).
-            AddReward(0.0f);
+            AddReward(-0.01f);
         }
 
         public void HandleFinishlevel()
         {
             // TODO: Change the reward below as appropriate.
-            AddReward(0.0f);
+            float reward = 5 / (player.moves + 1f);
+            AddReward(reward);
         }
 
         public void HandleLevelRestart(bool gameOver)
@@ -43,7 +54,7 @@ namespace Completed
             else
             {
                 // Probably *is* best to consider episodes finished when the exit is reached
-                // EndEpisode();
+                EndEpisode();
             }
             
         }
@@ -52,11 +63,22 @@ namespace Completed
         {
             // TODO: Insert proper code here for collecting the observations!
             // At the moment this code just feeds in 10 observations, all hardcoded to zero, as a placeholder.
+            int totalObservers = 24;
 
-            for (int i = 0; i < 10; i++)
+            sensor.AddObservation(player.transform.position);
+            sensor.AddObservation(GameManager.instance.exit);
+            int count = 6;
+            foreach (Sheep sheep in GameManager.instance.sheep)
+            {
+                sensor.AddObservation(sheep.transform.position);
+                count += 3;
+            }
+
+            for (int i = 0; i < totalObservers - count; i++)
             {
                 sensor.AddObservation(0.0f);
             }
+
             base.CollectObservations(sensor);
         }
 

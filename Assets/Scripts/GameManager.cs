@@ -26,10 +26,11 @@ namespace Completed
 		private GameObject levelImage;							//Image to block out level as levels are being set up, background for levelText.
 		public BoardManager boardScript;						//Store a reference to our BoardManager which will set up the level.
 		public int level = 1;									//Current level number, expressed in game as "Day 1".
-		private List<Sheep> sheep;								//List of all sheep units, used to issue them move commands.
+		public List<Sheep> sheep;								//List of all sheep units, used to issue them move commands.
 		private bool sheepMoving;								//Boolean to check if sheep are moving.
 		public bool doingSetup = true;                          //Boolean to check if we're setting up board, prevent Player from moving during setup.
 
+		public GameObject exit;
 		public int score;
 		public int endScore;
 
@@ -130,7 +131,9 @@ namespace Completed
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			boardScript.SetupScene(level);
 
-            playerMovesSinceSheepMove = 0;
+			exit = boardScript.Exit();
+
+			playerMovesSinceSheepMove = 0;
         }
 		
 		
@@ -220,17 +223,14 @@ namespace Completed
 
 		public void CheckIfGameOver()
         {
+			Player player = FindObjectOfType<Player>();
+			player.Score();
 			score++;
-			if (score == endScore)
+			if (score >= endScore)
             {
-				Debug.Log("End");
-				Player player = FindObjectOfType<Player>();
+				
 				player.CheckIfGameOver();
 			}
-			else
-            {
-				Debug.Log(score + " / " + endScore);
-            }
 
 			
         }
