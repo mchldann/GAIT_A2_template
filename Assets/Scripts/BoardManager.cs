@@ -160,7 +160,7 @@ namespace Completed
             LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum);
 
             //Determine number of enemies based on current level number, based on a logarithmic progression
-            int enemyCount = (int)Mathf.Log(level, 2f);
+            int enemyCount = (int)Mathf.Log(level, 2f) + 1;
 
             //Instantiate a random number of enemies based on minimum and maximum, at randomized positions.
             LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);

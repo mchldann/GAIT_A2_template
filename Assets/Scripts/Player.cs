@@ -6,11 +6,13 @@ namespace Completed
 	//Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
 	public class Player : MovingObject
 	{
+		public int moves;
 
 		public int wallDamage = 1;					//How much damage a player does to a wall when chopping it.
 		public AudioClip moveSound1;				//1 of 2 Audio clips to play when player moves.
 		public AudioClip moveSound2;				//2 of 2 Audio clips to play when player moves.
 		public AudioClip gameOverSound;				//Audio clip to play when player dies.
+
 		
 		private Animator animator;					//Used to store a reference to the Player's animator component.
         private PlayerAgent agent;                  //Used to store a reference to the Player's agent component.
@@ -26,8 +28,10 @@ namespace Completed
         //Start overrides the Start function of MovingObject
         protected override void Start ()
 		{
-            //Get a component reference to the Player's animator component
-            animator = GetComponent<Animator>();
+			moves = 0;
+
+			//Get a component reference to the Player's animator component
+			animator = GetComponent<Animator>();
 
             //Get a component reference to the Player's agent component
             agent = GetComponent<PlayerAgent>();
@@ -54,8 +58,8 @@ namespace Completed
 				//Call RandomizeSfx of SoundManager to play the move sound, passing in two audio clips to choose from.
 				SoundManager.instance.RandomizeSfx (moveSound1, moveSound2);
 			}
-			
 
+			moves++;
             GameManager.instance.playerMovesSinceSheepMove++;
 		}
 		
@@ -90,7 +94,7 @@ namespace Completed
             //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
 
             GameManager.instance.CreateNewLevel();
-
+			moves = 0;
             levelFinished = false;
             gameOver = false;
             enabled = true;
@@ -98,36 +102,27 @@ namespace Completed
 		
 		
         //CheckIfGameOver checks if the player is out of food points and if so, ends the game.
-        private void CheckIfGameOver()
+        public void CheckIfGameOver()
         {
             if (levelFinished || gameOver)
             {
                 return;
             }
 
-			/*
-            //Check if food point total is less than or equal to zero.
-            if (food <= 0)
-            {
-                //Call the PlaySingle function of SoundManager and pass it the gameOverSound as the audio clip to play.
-                SoundManager.instance.PlaySingle(gameOverSound);
+			agent.HandleFinishlevel();
 
-                //Disable the player object since level is over.
-                enabled = false;
+			//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
+			Invoke("Restart", GameManager.instance.restartLevelDelay);
 
-                //Stop the background music.
-                //SoundManager.instance.musicSource.Stop();
+			//Disable the player object since level is over.
+			enabled = false;
 
-                //Call the GameOver function of GameManager.
-                GameManager.instance.GameOver();
+			levelFinished = true;
 
-                gameOver = true;
 
-                //Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
-                Invoke("Restart", GameManager.instance.restartLevelDelay);
-            }
-			*/
-        }
+
+
+		}
     }
 }
 
