@@ -63,14 +63,14 @@ namespace Completed
         {
             // TODO: Insert proper code here for collecting the observations!
             // At the moment this code just feeds in 10 observations, all hardcoded to zero, as a placeholder.
-            int totalObservers = 24;
+            int totalObservers = 27;
 
-            sensor.AddObservation(player.transform.position);
-            sensor.AddObservation(GameManager.instance.exit);
+            Vector3 pos = player.transform.position;
+            sensor.AddObservation(GameManager.instance.exit.transform.position - pos);
             int count = 6;
             foreach (Sheep sheep in GameManager.instance.sheep)
             {
-                sensor.AddObservation(sheep.transform.position);
+                sensor.AddObservation(sheep.transform.position - pos);
                 count += 3;
             }
 
