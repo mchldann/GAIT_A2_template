@@ -11,17 +11,17 @@ namespace Completed
 		
 		void Awake ()
 		{
-			//Check if a GameManager has already been assigned to static variable GameManager.instance or if it's still null
-			if (GameManager.instance == null)
+			////Check if a GameManager has already been assigned to static variable GameManager.instance or if it's still null
+			//if (GameManager.instance == null)
 				
-				//Instantiate gameManager prefab
-				Instantiate(gameManager);
+			//	//Instantiate gameManager prefab
+			//	Instantiate(gameManager);
 			
-			//Check if a SoundManager has already been assigned to static variable GameManager.instance or if it's still null
-			if (SoundManager.instance == null && soundManager != null)
+			////Check if a SoundManager has already been assigned to static variable GameManager.instance or if it's still null
+			//if (SoundManager.instance == null && soundManager != null)
 				
-				//Instantiate SoundManager prefab
-				Instantiate(soundManager);
+			//	//Instantiate SoundManager prefab
+			//	Instantiate(soundManager);
 		}
 	}
 }

@@ -57,7 +57,7 @@ namespace Completed
 			}
             else
             {
-                StartCoroutine(DoNotMove());
+                //StartCoroutine(DoNotMove());
             }
 			
 			//If something was hit, return false, Move was unsuccesful.
@@ -65,14 +65,14 @@ namespace Completed
 		}
 
 
-        protected IEnumerator DoNotMove()
-        {
-            isMoving = true;
+        //protected IEnumerator DoNotMove()
+        //{
+        //    isMoving = true;
 
-            yield return new WaitForSeconds(GameManager.instance.moveTime);
+        //    //yield return new WaitForSeconds(GameManager.instance.moveTime);
 
-            isMoving = false;
-        }
+        //    isMoving = false;
+        //}
 
 
         //Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
@@ -94,10 +94,10 @@ namespace Completed
                 }
 
                 //Find a new position proportionally closer to the end, based on the moveTime
-                Vector3 newPostion = Vector3.MoveTowards(rb2D.position, smoothMovementEnd, GameManager.instance.inverseMoveTime * Time.deltaTime);
+                //Vector3 newPostion = Vector3.MoveTowards(rb2D.position, smoothMovementEnd, GameManager.instance.inverseMoveTime * Time.deltaTime);
 
 				//Call MovePosition on attached Rigidbody2D and move it to the calculated position.
-				rb2D.MovePosition (newPostion);
+				//rb2D.MovePosition (newPostion);
 				
 				//Return and loop until sqrRemainingDistance is close enough to zero to end the function
 				yield return null;
