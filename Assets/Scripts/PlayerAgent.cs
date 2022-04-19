@@ -1,34 +1,17 @@
 ﻿using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
-using System.Collections.Generic;
 using Unity.MLAgents.Actuators;
 
 namespace Completed
 {
-    //Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
+    // Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
     public class PlayerAgent : Agent
     {
         private Player player;
         private int lastAction = 0;
 
         [SerializeField] private GameManager gameManager;
-
-        private float playerFood;
-        private float foodValue = 0.02f;
-        //private float foodLostPenalty = -0.5f;
-
-        private Node exitNode;
-        private Node playerNode;
-        private List<Vector2> listOfFoodVectors;
-        private List<Vector2> listOfSodaVectors;
-        private List<Vector2> listOfInnerWallVectors;
-        private List<Vector2> listOfEnemyVectors;
-        private Vector2 playerToExitVector2;
-
-        private int maxWallCount = 9;
-        private int maxFoodCount = 5;
-        private int maxEnemyCount = 6;
 
         void Start()
         {
@@ -37,9 +20,7 @@ namespace Completed
 
         public override void OnEpisodeBegin()
         {
-            playerNode = gameManager.gridState.GetPlayerNode();
-            exitNode = gameManager.gridState.GetExitNode();
-            UpdateObservations();
+            // TODO: Add any necessary code
         }
 
         public void HandleAttemptMove()
@@ -50,24 +31,25 @@ namespace Completed
 
         public void HandleFinishlevel()
         {
-            AddReward(playerFood);
+            // TODO: Change the reward below as appropriate.
+            AddReward(0.0f);
         }
 
         public void HandleFoundFood()
         {
+            // TODO: Change the reward below as appropriate.
             AddReward(0.0f);
         }
 
         public void HandleFoundSoda()
         {
-            //AddReward(0.5f);
+            // TODO: Change the reward below as appropriate.
             AddReward(0.0f);
         }
-
         public void HandleLoseFood(int loss)
         {
-            //AddReward(-loss * foodValue); // -0.5f
-            AddReward(-0.5f);
+            // TODO: Change the reward below as appropriate.
+            AddReward(0.0f);
         }
 
         public void HandleLevelRestart(bool gameOver)
@@ -75,189 +57,40 @@ namespace Completed
             if (gameOver)
             {
                 Debug.Log("Level Reached" + gameManager.level);
-                //Academy.Instance.StatsRecorder.Add("Level Reached", GameManager.instance.level);
                 Academy.Instance.StatsRecorder.Add("Level Reached", gameManager.level);
                 EndEpisode();
             }
 
             // NOTE: You might also want to end the episode whenever the player successfully reaches the exit sign. You can achieve this by uncommenting the below:
-
+            /*
             else
             {
                 // Probably *is* best to consider episodes finished when the exit is reached
                 EndEpisode();
             }
-
+            */
         }
 
         public override void CollectObservations(VectorSensor sensor)
         {
-            UpdateObservations();
+            // TODO: Insert proper code here for collecting the observations!
+            // At the moment this code just feeds in 10 observations, all hardcoded to zero, as a placeholder.
 
-            sensor.AddObservation(playerToExitVector2);
-            sensor.AddObservation(playerFood);
-
-            // add wall to sensor
-            for (int i = 0; i < maxWallCount; i++)
+            for (int i = 0; i < 10; i++)
             {
-                if(i < listOfInnerWallVectors.Count)
-                {
-                    sensor.AddObservation(listOfInnerWallVectors[i]);
-                }
-                else
-                {
-                    sensor.AddObservation(new Vector2(0, 0));
-                }
-            }
-
-            // add food to sensor
-            for (int i = 0; i < maxFoodCount; i++)
-            {
-                if (i < listOfFoodVectors.Count)
-                {
-                    sensor.AddObservation(listOfFoodVectors[i]);
-                }
-                else
-                {
-                    sensor.AddObservation(new Vector2(0, 0));
-                }
-            }
-
-            // add soda to sensor
-            // uses the same max food count
-            for (int i = 0; i < maxFoodCount; i++)
-            {
-                if (i < listOfSodaVectors.Count)
-                {
-                    sensor.AddObservation(listOfSodaVectors[i]);
-                }
-                else
-                {
-                    sensor.AddObservation(new Vector2(0, 0));
-                }
-            }
-
-            // add enemies to sensor
-            for (int i = 0; i < maxEnemyCount; i++)
-            {
-                if (i < listOfEnemyVectors.Count)
-                {
-                    sensor.AddObservation(listOfEnemyVectors[i]);
-                }
-                else
-                {
-                    sensor.AddObservation(new Vector2(0, 0));
-                }
+                sensor.AddObservation(0.0f);
             }
 
             base.CollectObservations(sensor);
         }
 
-        private void UpdateObservations()
-        {
-            playerFood = player.food / 100.0f;
-            playerNode = gameManager.gridState.GetPlayerNode();
-            exitNode = gameManager.gridState.GetExitNode();
-            playerToExitVector2 = ConvertNodeToVector2(exitNode);
-
-            // get list of all inner walls in the scene (5-9 walls)
-            List<Node> listofInnerWalls = gameManager.gridState.GetListOfNodesWithInnerWalls();
-
-            // sort by distance to the player
-            listofInnerWalls.Sort(SortByDistanceToPlayer);
-            listOfInnerWallVectors = new List<Vector2>();
-
-            // convert to normalised values that make more sense to the agent using formulas from lecture
-            foreach (Node node in listofInnerWalls)
-            {
-                listOfInnerWallVectors.Add(ConvertNodeToVector2(node));
-            }
-
-
-            // get list of all food objects in the scene (1-5 walls)
-            List<Node> listOfFoodObjects = gameManager.gridState.GetListOfNodesWithFood();
-
-            // sort by distance to the player
-            listOfFoodObjects.Sort(SortByDistanceToPlayer);
-            listOfFoodVectors = new List<Vector2>();
-
-            // convert to normalised values that make more sense to the agent using formulas from lecture
-            foreach (Node node in listOfFoodObjects)
-            {
-                listOfFoodVectors.Add(ConvertNodeToVector2(node));
-            }
-
-
-            // get list of all food objects in the scene (1-5 walls)
-            List<Node> listOfSodaObjects = gameManager.gridState.GetListOfNodesWithSoda();
-
-            // sort by distance to the player
-            listOfSodaObjects.Sort(SortByDistanceToPlayer);
-            listOfSodaVectors = new List<Vector2>();
-
-            // convert to normalised values that make more sense to the agent using formulas from lecture
-            foreach (Node node in listOfSodaObjects)
-            {
-                listOfSodaVectors.Add(ConvertNodeToVector2(node));
-            }
-
-
-            // get list of all enemies in the scene up to level 30 logbase2(30) = 4.9 (1-5)
-            List<Node> listOfEnemyObjeccts = gameManager.gridState.GetListOfNodesWithEnemies();
-
-            // sort by distance to the player
-            listOfEnemyObjeccts.Sort(SortByDistanceToPlayer);
-            listOfEnemyVectors = new List<Vector2>();
-
-            // convert to normalised values that make more sense to the agent using formulas from lecture
-            foreach (Node node in listOfEnemyObjeccts)
-            {
-                listOfEnemyVectors.Add(ConvertNodeToVector2(node));
-            }
-        }
-
-        private int SortByDistanceToPlayer(Node a, Node b)
-        {
-            float squaredRangeA = (new Vector2(a.row, a.column) - new Vector2(playerNode.row, playerNode.column)).sqrMagnitude;
-            float squaredRangeB = (new Vector2(b.row, b.column) - new Vector2(playerNode.row, playerNode.column)).sqrMagnitude;
-            return squaredRangeA.CompareTo(squaredRangeB);
-        }
-
-        private Vector2 ConvertNodeToVector2(Node nodeToConvert)
-        {
-            float playerToNodeToConvertX = nodeToConvert.row - playerNode.row;
-            float playerToNodeToConvertY = nodeToConvert.column - playerNode.column;
-
-            float distance = Mathf.Sqrt(playerToNodeToConvertX * playerToNodeToConvertX + playerToNodeToConvertY * playerToNodeToConvertY);
-            
-            //prevents NaN float values
-            if(distance == 0)
-            {
-                return (new Vector2(0, 0));
-            }
-
-            float xDerivative = 1 / distance * (playerToNodeToConvertX);
-            float yDerivative = 1 / distance * (playerToNodeToConvertY);
-
-            float k = 0.1f;
-
-            float exponentialX = Mathf.Exp(-k * distance) * xDerivative;
-            float exponentialY = Mathf.Exp(-k * distance) * yDerivative;
-
-            Vector2 returnVector2 = new Vector2(exponentialX, exponentialY);
-            return returnVector2;
-        }
-
         private bool CanMove()
         {
-            //return !(player.isMoving || player.levelFinished || player.gameOver || GameManager.instance.doingSetup);
             return !(player.isMoving || player.levelFinished || player.gameOver || gameManager.doingSetup);
         }
 
         public override void OnActionReceived(ActionBuffers actions)
         {
-            //If it's not the player's turn, exit the function.
-            //if (!CanMove()) return;
             if (gameManager.playerMovesSinceEnemyMove == gameManager.playerMovesPerEnemyMove && CanMove() && gameManager.playerMoving == false)
             {
                 return;
@@ -272,22 +105,18 @@ namespace Completed
                 case 0:
                     break;
                 case 1:
-                    //player.AttemptMove<Wall>(-1, 0);
                     gameManager.playerMoving = true;
                     player.AttemptMove(-1, 0);
                     break;
                 case 2:
-                    //player.AttemptMove<Wall>(1, 0);
                     gameManager.playerMoving = true;
                     player.AttemptMove(1, 0);
                     break;
                 case 3:
-                    //player.AttemptMove<Wall>(0, -1);
                     gameManager.playerMoving = true;
                     player.AttemptMove(0, -1);
                     break;
                 case 4:
-                    //player.AttemptMove<Wall>(0, 1);
                     gameManager.playerMoving = true;
                     player.AttemptMove(0, 1);
                     break;
@@ -298,52 +127,75 @@ namespace Completed
 
         public override void Heuristic(in ActionBuffers actionsOut)
         {
-            //GameManager.instance.HandleHeuristicMode();
-            gameManager.HandleHeuristicMode();
             GetComponent<DecisionRequester>().DecisionPeriod = 1;
-
             ActionSegment<int> discreteActionsOut = actionsOut.DiscreteActions;
 
             //If it's not the player's turn, exit the function.
-            //if (!CanMove())
-            //{
-            //    actionsOut[0] = lastAction;
-            //    return;
-            //}
-            if (gameManager.playerMovesSinceEnemyMove == gameManager.playerMovesPerEnemyMove && CanMove() && gameManager.playerMoving == false)
+            if (!CanMove())
             {
                 discreteActionsOut[0] = lastAction;
                 return;
             }
 
-            gameManager.playerTurn = false;
-
             int horizontal = 0;     //Used to store the horizontal move direction.
             int vertical = 0;       //Used to store the vertical move direction.
 
-            ////Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-            //horizontal = (int)(Input.GetAxisRaw("Horizontal"));
+            //Check if we are running either in the Unity editor or in a standalone build.
+#if UNITY_STANDALONE || UNITY_WEBPLAYER
 
-            ////Get input from the input manager, round it to an integer and store in vertical to set y axis move direction
-            //vertical = (int)(Input.GetAxisRaw("Vertical"));
+            //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
+            horizontal = (int)(Input.GetAxisRaw("Horizontal"));
 
-            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-                horizontal = (int)(Input.GetAxisRaw("Horizontal"));
-            }
-
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                //Get input from the input manager, round it to an integer and store in vertical to set y axis move direction
-                vertical = (int)(Input.GetAxisRaw("Vertical"));
-            }
+            //Get input from the input manager, round it to an integer and store in vertical to set y axis move direction
+            vertical = (int)(Input.GetAxisRaw("Vertical"));
 
             //Check if moving horizontally, if so set vertical to zero.
             if (horizontal != 0)
             {
                 vertical = 0;
             }
+            //Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
+#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+			
+			//Check if Input has registered more than zero touches
+			if (Input.touchCount > 0)
+			{
+				//Store the first touch detected.
+				Touch myTouch = Input.touches[0];
+				
+				//Check if the phase of that touch equals Began
+				if (myTouch.phase == TouchPhase.Began)
+				{
+					//If so, set touchOrigin to the position of that touch
+					touchOrigin = myTouch.position;
+				}
+				
+				//If the touch phase is not Began, and instead is equal to Ended and the x of touchOrigin is greater or equal to zero:
+				else if (myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0)
+				{
+					//Set touchEnd to equal the position of this touch
+					Vector2 touchEnd = myTouch.position;
+					
+					//Calculate the difference between the beginning and end of the touch on the x axis.
+					float x = touchEnd.x - touchOrigin.x;
+					
+					//Calculate the difference between the beginning and end of the touch on the y axis.
+					float y = touchEnd.y - touchOrigin.y;
+					
+					//Set touchOrigin.x to -1 so that our else if statement will evaluate false and not repeat immediately.
+					touchOrigin.x = -1;
+					
+					//Check if the difference along the x axis is greater than the difference along the y axis.
+					if (Mathf.Abs(x) > Mathf.Abs(y))
+						//If x is greater than zero, set horizontal to 1, otherwise set it to -1
+						horizontal = x > 0 ? 1 : -1;
+					else
+						//If y is greater than zero, set horizontal to 1, otherwise set it to -1
+						vertical = y > 0 ? 1 : -1;
+				}
+			}
+			
+#endif //End of mobile platform dependendent compilation section started above with #elif
 
             if (horizontal == 0 && vertical == 0)
             {
@@ -368,14 +220,5 @@ namespace Completed
 
             discreteActionsOut[0] = discreteActionsOut[0] - 1; // TODO: Remove this line if zero movement is allowed
         }
-
-        //public void OnDrawGizmos()
-        //{
-        //    Gizmos.color = Color.red;
-        //    Gizmos.DrawSphere(new Vector3(playerNode.row + gameManager.trainingPenXPositionOffSet, playerNode.column + gameManager.trainingPenYPositionOffSet, 0), 0.25f);
-
-        //    Gizmos.color = Color.green;
-        //    Gizmos.DrawSphere(new Vector3(exitNode.row + gameManager.trainingPenXPositionOffSet, exitNode.column + gameManager.trainingPenYPositionOffSet, 0), 0.25f);
-        //}
     }
 }

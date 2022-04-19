@@ -50,22 +50,6 @@ namespace Completed
             InitGame();
         }
 
-        public void HandleHeuristicMode()
-        {
-            //if (!heuristicModeSet)
-            //{
-            //    Time.fixedDeltaTime = 0.02f;
-            //    levelStartDelay = 2f;
-            //    restartLevelDelay = 1f;
-            //    turnDelay = 0.1f;
-            //    moveTime = 0.1f;
-            //    heuristicModeSet = true;
-
-            //By storing the reciprocal of the move time we can use it by multiplying instead of dividing, this is more efficient.
-            //inverseMoveTime = 1f / moveTime;
-            //}
-        }
-
         //Awake is always called before any Start functions
         void Awake()
         {
