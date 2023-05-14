@@ -2,7 +2,7 @@
 
 This repo contains an optional starter game for Assignment 3 in Games and Artificial Intelligence Techniques (COSC2527 / COSC2528). It has been adapted from Unity's 2D Roguelike tutorial: https://learn.unity.com/project/2d-roguelike-tutorial.
 
-(Please ignore the name of the repo -- this used to be the second assignment in Games and AI, which is why it's called GAIT_**A2**_template.)
+(Please ignore the name of this repo -- this used to be the second assignment in Games and AI, which is why it's called GAIT_**A2**_template.)
 
 The game has been modified to suit ML-Agents better by adding 8 parallel training pens.
 
