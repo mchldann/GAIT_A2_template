@@ -49,14 +49,10 @@ namespace Completed
             agent = GetComponent<PlayerAgent>();
 
             //Get the current food point total stored in GameManager.instance between levels.
-            //food = GameManager.playerStartFood;
             food = gameManager.playerStartFood;
 
             //Set the foodText to reflect the current player food total.
             foodText.text = "Food: " + food;
-
-            //Call the Start function of the MovingObject base class.
-            //base.Start();
         }
 
 
@@ -71,16 +67,9 @@ namespace Completed
             //Update food text display to reflect current score.
             foodText.text = "Food: " + food;
 
-            //Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
-            //base.AttemptMove(xDir, yDir);
-
             Vector2 attemptingPosition = new Vector2(transform.position.x + xDir, transform.position.y + yDir);
 
-            //Hit allows us to reference the result of the Linecast done in Move.
-            //RaycastHit2D hit;
-
             //If Move returns true, meaning Player was able to move into an empty space.
-            //if (Move(xDir, yDir, out hit))
             if (Move(xDir, yDir))
             {
                 //Call RandomizeSfx of SoundManager to play the move sound, passing in two audio clips to choose from.
@@ -105,13 +94,10 @@ namespace Completed
 
             CheckIfMovedOntoObject();
 
-            //GameManager.instance.playerMovesSinceEnemyMove++;
             gameManager.playerMovesSinceEnemyMove++;
         }
 
         //Move returns true if it is able to move and false if not. 
-        //Move takes parameters for x direction, y direction and a RaycastHit2D to check collision.
-        //protected bool Move(int xDir, int yDir, out RaycastHit2D hit)
         protected bool Move(int xDir, int yDir)
         {
             //Store start position to move from, based on objects current transform position.
@@ -120,20 +106,6 @@ namespace Completed
             // Calculate end position based on the direction parameters passed in when calling Move.
             Vector2 end = start + new Vector2(xDir, yDir);
 
-            //Disable the boxCollider so that linecast doesn't hit this object's own collider.
-            //boxCollider.enabled = false;
-
-            //Cast a line from start point to end point checking collision on blockingLayer.
-            //hit = Physics2D.Linecast(start, end, blockingLayer);
-
-
-            //Re-enable boxCollider after linecast
-            //boxCollider.enabled = true;
-
-            //gameManager.gridState.CheckIfNodeHasNoCollisions((int)end.x, (int)end.y);
-
-            //Check if anything was hit
-            //if (hit.transform == null)
             if (!gameManager.gridState.CheckIfNodeHasNoCollisions((int)end.x - gameManager.trainingPenXPositionOffSet, (int)end.y - gameManager.trainingPenYPositionOffSet))
             {
                 //If nothing was hit, start SmoothMovement co-routine passing in the Vector2 end as destination
@@ -224,114 +196,21 @@ namespace Completed
 
             smoothMovementEnd = end;
 
+            // TODO: This logic can probably be tidied up now that movement occurs instantaneously.
             while (true)
             {
-                //Calculate the remaining distance to move based on the square magnitude of the difference between current position and end parameter. 
-                //Square magnitude is used instead of magnitude because it's computationally cheaper.
-                //float sqrRemainingDistance = (transform.position - smoothMovementEnd).sqrMagnitude;
-
-                //if (sqrRemainingDistance <= float.Epsilon)
-                //{
                 if (Vector3.Distance(transform.position, smoothMovementEnd) == 0f)
                 {
-                    //Debug.Log("fuck");
-                    //gameManager.playerTurn = true;
-                    //gameManager.playerMoving = true;
                     break;
                 }
 
-                //Find a new position proportionally closer to the end, based on the moveTime
-                //Vector3 newPostion = Vector3.MoveTowards(rb2D.position, smoothMovementEnd, GameManager.instance.inverseMoveTime * Time.deltaTime);
-                //Vector3 newPosition = Vector3.MoveTowards(transform.position, smoothMovementEnd, gameManager.inverseMoveTime * Time.deltaTime);
-
-                //Call MovePosition on attached Rigidbody2D and move it to the calculated position.
-                //rb2D.MovePosition(newPostion);
-                //transform.position = newPosition;
                 transform.position = smoothMovementEnd;
 
-                //Return and loop until sqrRemainingDistance is close enough to zero to end the function
                 yield return null;
-                //yield return new WaitForSeconds(gameManager.moveTime);
             }
+
             isMoving = false;
-            //gameManager.playerMoving = false;
-            //gameManager.playerTurn = true;
         }
-
-
-        //OnCantMove overrides the abstract function OnCantMove in MovingObject.
-        //It takes a generic parameter T which in the case of Player is a Wall which the player can attack and destroy.
-        //protected override void OnCantMove(T component)
-        //{
-        //    //Set hitWall to equal the component passed in as a parameter.
-        //    Wall hitWall = component as Wall;
-
-        //    //Call the DamageWall function of the Wall we are hitting.
-        //    hitWall.DamageWall(wallDamage);
-
-        //    //Set the attack trigger of the player's animation controller in order to play the player's attack animation.
-        //    //animator.SetTrigger("playerChop");
-        //}
-
-
-        //OnTriggerEnter2D is sent when another object enters a trigger collider attached to this object (2D physics only).
-        //private void OnTriggerEnter2D(Collider2D other)
-        //{
-        //    if (levelFinished || gameOver)
-        //    {
-        //        return;
-        //    }
-
-        //    //Check if the tag of the trigger collided with is Exit.
-        //    if (other.tag == "Exit")
-        //    {
-        //        //agent.HandleFinishlevel();
-
-        //        //Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
-        //        //Invoke("Restart", GameManager.instance.restartLevelDelay);
-        //        Invoke("Restart", gameManager.restartLevelDelay);
-
-        //        //Disable the player object since level is over.
-        //        enabled = false;
-
-        //        levelFinished = true;
-        //    }
-
-        //    //Check if the tag of the trigger collided with is Food.
-        //    else if (other.tag == "Food")
-        //    {
-        //        //Add pointsPerFood to the players current food total.
-        //        food += pointsPerFood;
-        //        //agent.HandleFoundFood();
-
-        //        //Update foodText to represent current total and notify player that they gained points
-        //        foodText.text = "+" + pointsPerFood + " Food: " + food;
-
-        //        //Call the RandomizeSfx function of SoundManager and pass in two eating sounds to choose between to play the eating sound effect.
-        //        //SoundManager.instance.RandomizeSfx(eatSound1, eatSound2);
-
-        //        //Disable the food object the player collided with.
-        //        other.gameObject.SetActive(false);
-        //    }
-
-        //    //Check if the tag of the trigger collided with is Soda.
-        //    else if (other.tag == "Soda")
-        //    {
-        //        //Add pointsPerSoda to players food points total
-        //        food += pointsPerSoda;
-        //        //agent.HandleFoundSoda();
-
-        //        //Update foodText to represent current total and notify player that they gained points
-        //        foodText.text = "+" + pointsPerSoda + " Food: " + food;
-
-        //        //Call the RandomizeSfx function of SoundManager and pass in two drinking sounds to choose between to play the drinking sound effect.
-        //        //SoundManager.instance.RandomizeSfx(drinkSound1, drinkSound2);
-
-        //        //Disable the soda object the player collided with.
-        //        other.gameObject.SetActive(false);
-        //    }
-        //}
-
 
         //Restart reloads the scene when called.
         private void Restart()
@@ -401,13 +280,11 @@ namespace Completed
                 //SoundManager.instance.musicSource.Stop();
 
                 //Call the GameOver function of GameManager.
-                //GameManager.instance.GameOver();
                 gameManager.GameOver();
 
                 gameOver = true;
 
                 //Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
-                //Invoke("Restart", GameManager.instance.restartLevelDelay);
                 Invoke("Restart", gameManager.restartLevelDelay);
             }
         }

@@ -20,4 +20,4 @@ behaviors:
         strength: 1
     max_steps: 999999999
     time_horizon: 5
-    summary_freq: 10000
+    summary_freq: 5000

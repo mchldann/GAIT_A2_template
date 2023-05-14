@@ -52,6 +52,12 @@ namespace Completed
             AddReward(0.0f);
         }
 
+        public void HandleReachedExit()
+        {
+            // TODO: Change the reward below as appropriate.
+            AddReward(0.0f);
+        }
+
         public void HandleLevelRestart(bool gameOver)
         {
             if (gameOver)
@@ -60,15 +66,10 @@ namespace Completed
                 Academy.Instance.StatsRecorder.Add("Level Reached", gameManager.level);
                 EndEpisode();
             }
-
-            // NOTE: You might also want to end the episode whenever the player successfully reaches the exit sign. You can achieve this by uncommenting the below:
-            /*
             else
             {
-                // Probably *is* best to consider episodes finished when the exit is reached
-                EndEpisode();
+                HandleReachedExit();
             }
-            */
         }
 
         public override void CollectObservations(VectorSensor sensor)
